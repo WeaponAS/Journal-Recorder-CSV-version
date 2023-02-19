@@ -22,8 +22,8 @@ except FileNotFoundError:
 except pd.errors.EmptyDataError:
     print("Empty DataFrame")
 while True:
-    print("\t\t\t\tMain Menu")
-    print("_________________________________________________")
+    MainMenu = "Main Menu"
+    print(f'{MainMenu:-^50}')
     # Changed inflow to income for clarity
     print("\nBalance : ", df.inflow.sum() - df.outflow.sum())
     print("1) Record Journal Entries")
@@ -50,8 +50,8 @@ while True:
     if MainOperation == 2:
         print("*"*30)
         print("Statistics")
-        StatOption = input("Do you want to show stats of previous months (Y/N) : ")
-        if StatOption.upper() == 'Y':
+        StatOption = input("Do you want to show stats of this months (Y/N) : ")
+        if StatOption.upper() == 'N':
             Year = int(input("Enter year (YYYY): "))
             Month = int(input("Enter Month (MM): "))
             MN = DayTimeMonth.Month_name_today()
@@ -70,50 +70,50 @@ while True:
                 tempdf = df[df['Particular']==item]
                 total = tempdf['inflow'].sum() - tempdf['outflow'].sum()
                 print(item + ":", total)
-        elif StatOption.upper() == 'N':
+                AnyKey = input("Press Enter to Return to main menu : ")
+                if AnyKey=="":
+                    os.system('cls' if os.name == 'nt' else 'clear')
+        elif StatOption.upper() == 'Y':
             print('Current Total : ', df.inflow.sum() - df.outflow.sum())
             SI = df['Particular'].unique()
             for item in SI:
                 tempdf = df[df['Particular'] == item]
                 total = tempdf['inflow'].sum() - tempdf['outflow'].sum()
                 print(item + ":", total)
+                AnyKey = input("Press Enter to Return to main menu : ")
+                if AnyKey=="":
+                    os.system('cls' if os.name == 'nt' else 'clear')
     elif MainOperation==3:
-        AnalysisOption=input("Do you Want to show This Month's Analysis (Y/N): ")
-        if AnalysisOption.upper()=='Y':
+        AnalysisOption=input("Do you Want to Compair Analysis (Y/N): ")
+        if AnalysisOption.upper()=='N':
             #display inflow and outflow for current month for each day
-            df[["inflow","Outflow"]].plot(kind='bar',color=['Green','Red'])
-            plt.show()            
-
-    elif MainOperation == 3:
-        AnalysisOption = input("Do you want to show this month's analysis (Y/N): ")
-        if AnalysisOption.upper() == 'Y':
-            # group the inflow and outflow by day and sum the values
-            daily_summary = df.groupby(pd.Grouper(key="Date", freq="D"))["inflow", "outflow"].sum()
-            # create a bar chart with the daily inflow and outflow values
-            daily_summary.plot(kind='bar', color=['Green', 'Red'])
-            plt.xlabel("Day of the Month")
+            df.set_index("Date",inplace=True)
+            df[["inflow","outflow"]].plot(kind='bar',color=['Green','Red'])
+            plt.xlabel("Date")
             plt.ylabel("Amount")
-            plt.title("Inflow and Outflow for Current Month")
-            plt.show()
-            plt.tight_layout()
-
-        elif AnalysisOption.upper() == 'N':
-        # group the inflow and outflow by day and sum the values
-            Year = input("Enter Year (YYYY): ")
-            Month = input("Enter Month (MM):")
-            AnalysisFile = "{}-{}.csv".format(Year,Month)
-            try:
-                df=pd.read_csv(AnalysisFile)
-            except FileNotFoundError:
-                print("File do not exist")
-            daily_summary = df.groupby(pd.Grouper(key="Date", freq="D"))["inflow", "outflow"].sum()
-            # create a bar chart with the daily inflow and outflow values
-            daily_summary.plot(kind='bar', color=['Green', 'Red'])
-            plt.xlabel("Day of the Month")
+            plt.title(file)
+            plt.subplots_adjust(bottom=0.25)
+            plt.show()       
+        elif AnalysisOption.upper()=="Y":
+            plt.figure()
+            df.set_index("Date",inplace=True)
+            df[["inflow","outflow"]].plot(kind='bar',color=['Green','Red'])
+            plt.xlabel("Date")
             plt.ylabel("Amount")
-            plt.title("Inflow and Outflow for Current Month")
+            plt.title(file)
+            plt.subplots_adjust(bottom=0.25)
             plt.show()
-            plt.tight_layout()
+            plt.figure()
+            
+            
+            dft="{}-{}.csv".format(MN,Year)
+            dft.set_index("Date",inplace=True)
+            dft[["inflow","outflow"]].plot(kind='bar',color=['Green','Red'])
+            plt.xlabel("Date")
+            plt.ylabel("Amount")
+            plt.title(file)
+            plt.subplots_adjust(bottom=0.25)
+            plt.show()
     elif MainOperation==4:
         print("Created a CSV txt file")
         df.to_csv("read.txt",index=False)
