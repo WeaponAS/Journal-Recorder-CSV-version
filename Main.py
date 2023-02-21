@@ -23,6 +23,7 @@ except pd.errors.EmptyDataError:
     print("Empty DataFrame")
 while True:
     MainMenu = "Main Menu"
+    print("\n\n")
     print(f'{MainMenu:-^50}')
     # Changed inflow to income for clarity
     print("\nBalance : ", df.inflow.sum() - df.outflow.sum())
@@ -30,6 +31,7 @@ while True:
     print("2) Show Statistics (Details)")
     print("3) Analysis (Data Visualising)")
     print("0) Quit")
+    print("\n\n")
     while True:
         try:
             MainOperation = int(input("\nEnter one of the above mentioned to perform Activity (Integer only): "))
@@ -52,24 +54,27 @@ while True:
         print("Recorded")
         print(df.loc[new_index])
         df.loc[new_index] = [date.today(), particular, note, outflow, income]
+        df.to_csv(file,index=False)
         os.system('cls' if os.name == 'nt' else 'clear')
         print("Previous Entry is Recorded")
-        df.to_csv(file,index=False)
+        print("\n\n")
     if MainOperation == 2:
+        print("\n\n")
         print("*"*30)
         print("Statistics")
         StatOption = input("Do you want to show stats of this months (Y/N) : ")
         if StatOption.upper() == 'N':
             Year = int(input("Enter year (YYYY): "))
             Month = int(input("Enter Month (MM): "))
-            MN = DayTimeMonth.Month_name_today()
+            MN = DayTimeMonth.Month_Name_oprational(Month)
             try:
-                statefile = "{}-{}".format(MN,Year)
+                statefile = "{}-{}.csv".format(MN,Year)
             except FileNotFoundError:
                 print("you may have deleted the file or \nthe file does not existed for file name {}".format(statefile))
             except pd.errors.EmptyDataError:
                 print("this file is empty cannot perform ant action")
                 break
+            print(f"{'Showing Statistics For Previous Month':=^60}")
             TempStat = pd.read_csv(statefile)
             print('Total : ',TempStat.inflow.sum()-TempStat.outflow.sum())
             SI = df['Particular'].unique()
@@ -86,13 +91,14 @@ while True:
         elif StatOption.upper() == 'Y':
             print('Current Total : ', df.inflow.sum() - df.outflow.sum())
             SI = df['Particular'].unique()
+            print(f'{"Showing Statistics For this Month":=^60}')
             for item in SI:
                 tempdf = df[df['Particular'] == item]
                 total = tempdf['inflow'].sum() - tempdf['outflow'].sum()
                 print(item + ":", total)
-                AnyKey = input("Press Enter to Return to main menu : ")
-                if AnyKey=="":
-                    os.system('cls' if os.name == 'nt' else 'clear')
+            AnyKey = input("Press Enter to Return to main menu : ")
+            if AnyKey=="":
+                os.system('cls' if os.name == 'nt' else 'clear')
     elif MainOperation==3:
         while True:
             AnalysisOption=input("Do you Want to Compair Analysis (Y/N): ")
